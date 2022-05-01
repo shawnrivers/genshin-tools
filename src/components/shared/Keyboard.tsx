@@ -153,7 +153,7 @@ const KeyButton: React.FC<KeyButtonProps> = props => {
   return (
     <button
       className={joinClassNames(
-        'flex h-16 flex-col items-center justify-center rounded bg-zinc-50 shadow hover:bg-zinc-200 focus:bg-zinc-200 focus:outline-none active:bg-zinc-300 active:shadow-none',
+        'flex h-16 flex-col items-center justify-center rounded bg-zinc-50 shadow hover:bg-zinc-200 focus:outline-none focus-visible:bg-zinc-200 active:bg-zinc-300 active:shadow-none',
         className,
       )}
       onClick={onClick.bind(null, keyboardKey.key)}
