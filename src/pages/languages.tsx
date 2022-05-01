@@ -8,12 +8,11 @@ import {
   LANGUAGES,
 } from 'app/utils/languages';
 import { NextPageWithLayout } from 'app/utils/types';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 const LanguagesPage: NextPageWithLayout = () => {
   const [language, setLanguage] = useState<Language>('teyvat');
   const [text, setText] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleChangeLanguage = useCallback<
     React.ChangeEventHandler<HTMLSelectElement>
@@ -23,20 +22,17 @@ const LanguagesPage: NextPageWithLayout = () => {
     setLanguage(_language);
   }, []);
 
-  const handleInput = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
-    e => {
-      setText(e.target.value);
-    },
-    [],
-  );
-
   const handleClickKeyboard = useCallback<KeyboardProps['onClick']>(
     key => {
       if (key === undefined) return;
 
-      setText(text.concat(key));
-      // Move the focus back to the input
-      inputRef.current?.focus();
+      if (/[a-z,.]/.test(key)) {
+        setText(text.concat(key));
+      }
+
+      if (key === 'Backspace') {
+        setText(text.slice(0, -1));
+      }
     },
     [text],
   );
@@ -58,25 +54,18 @@ const LanguagesPage: NextPageWithLayout = () => {
             ))}
           </select>
         </label>
-        <label className="mt-4 flex flex-col items-center space-y-2">
-          <div className="text-lg font-semibold">Input here</div>
-          <input
-            ref={inputRef}
-            value={text}
-            placeholder="Input text here or use the keyboard UI below"
-            className="mt-2 block rounded-full border-2 border-zinc-400 px-3 py-1 text-zinc-600"
-            onChange={handleInput}
-          />
-        </label>
-        <div className="mt-4 flex flex-col items-center space-y-2">
-          <div className="text-lg font-semibold">Result</div>
-          <div
-            className={joinClassNames(
-              'box-content h-6 rounded bg-zinc-200 px-4 py-2 text-xl text-zinc-800',
-              getLanguageFont(language),
-            )}
-          >
-            {text}
+        <div className="my-4 flex flex-col items-center space-y-2">
+          <div className="text-lg font-semibold">Input Result</div>
+          <div className="mt-2 box-content h-16 rounded-lg bg-zinc-200 px-4 py-2 text-center text-zinc-800">
+            <div className="mb-1 font-sans text-zinc-500">{text}</div>
+            <div
+              className={joinClassNames(
+                'text-2xl text-zinc-800',
+                getLanguageFont(language),
+              )}
+            >
+              {text}
+            </div>
           </div>
         </div>
       </div>
