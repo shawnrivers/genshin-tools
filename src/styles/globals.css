@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'Teyvat';
+    src: local('Teyvat'),
+      url('/fonts/Teyvat-Regular.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'Khaenriah';
+    src: local('Khaenriah'),
+      url('/fonts/Khaenriah-Regular.ttf') format('truetype');
+  }
+
+  body {
+    @apply text-zinc-900;
+  }
+}

@@ -1,0 +1,102 @@
+import { Keyboard, type KeyboardProps } from 'app/components/shared/Keyboard';
+import { Layout } from 'app/components/shared/Layout';
+import { joinClassNames } from 'app/utils/classNames';
+import {
+  getLanguageFont,
+  isDefinedLanguage,
+  Language,
+  LANGUAGES,
+} from 'app/utils/languages';
+import { NextPageWithLayout } from 'app/utils/types';
+import React, { useCallback, useRef, useState } from 'react';
+
+const LanguagesPage: NextPageWithLayout = () => {
+  const [language, setLanguage] = useState<Language>('teyvat');
+  const [text, setText] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleChangeLanguage = useCallback<
+    React.ChangeEventHandler<HTMLSelectElement>
+  >(e => {
+    const _language = e.target.value;
+    if (!isDefinedLanguage(_language)) return;
+    setLanguage(_language);
+  }, []);
+
+  const handleInput = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
+    e => {
+      setText(e.target.value);
+    },
+    [],
+  );
+
+  const handleClickKeyboard = useCallback<KeyboardProps['onClick']>(
+    key => {
+      if (key === undefined) return;
+
+      setText(text.concat(key));
+      // Move the focus back to the input
+      inputRef.current?.focus();
+    },
+    [text],
+  );
+
+  return (
+    <>
+      <div className="box-border flex flex-col items-center">
+        <label className="mt-8 flex flex-col items-center space-y-2">
+          <div className="text-lg font-semibold">Select a language</div>
+          <select
+            value={language}
+            className="rounded border-2 border-zinc-400 px-2 py-1"
+            onChange={handleChangeLanguage}
+          >
+            {LANGUAGES.map(languageOption => (
+              <option key={languageOption} value={languageOption}>
+                {languageOption}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="mt-4 flex flex-col items-center space-y-2">
+          <div className="text-lg font-semibold">Input here</div>
+          <input
+            ref={inputRef}
+            value={text}
+            placeholder="Input text here or use the keyboard UI below"
+            className="mt-2 block rounded-full border-2 border-zinc-400 px-3 py-1 text-zinc-600"
+            onChange={handleInput}
+          />
+        </label>
+        <div className="mt-4 flex flex-col items-center space-y-2">
+          <div className="text-lg font-semibold">Result</div>
+          <div
+            className={joinClassNames(
+              'box-content h-6 rounded bg-zinc-200 px-4 py-2 text-xl text-zinc-800',
+              getLanguageFont(language),
+            )}
+          >
+            {text}
+          </div>
+        </div>
+      </div>
+      <div className="sticky bottom-0 mx-auto w-full max-w-3xl p-2 opacity-100">
+        <Keyboard
+          language={language}
+          onClick={handleClickKeyboard}
+          className="rounded-lg bg-zinc-800/70 p-4 shadow-xl backdrop-blur-sm sm:p-6"
+        />
+      </div>
+    </>
+  );
+};
+
+export default LanguagesPage;
+
+LanguagesPage.getLayout = page => {
+  return (
+    <Layout title="Languages" heading="Languages" activeLink="languages">
+      {page}
+    </Layout>
+  );
+};
